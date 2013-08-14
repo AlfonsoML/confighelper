@@ -3,6 +3,97 @@
  * Copyright (C) 2012 Alfonso Martínez de Lizarrondo
  *
  */
+(function() {
+"use strict";
+
+// Check if the browser supports the placeholder attribute on textareas natively.
+var supportsPlaceholder = ('placeholder' in document.createElement( 'textarea' ) );
+
+// If the data is "empty" (BR, P) or the placeholder then return an empty string.
+// Otherwise return the original data
+function dataIsEmpty( data )
+{
+	if ( data.length > 20 )
+		return false;
+
+	var value = data.replace( /[\n|\t]*/g, '' ).toLowerCase();
+	if ( !value || value == '<br>' || value == '<p>&nbsp;<br></p>' || value == '<p><br></p>' || value == '<p>&nbsp;</p>' || value == '&nbsp;' || value == ' ' || value == '&nbsp;<br>' || value == ' <br>' )
+		return true;
+
+	return false;
+}
+
+function addPlaceholder(ev) {
+	var editor = ev.editor;
+	var root = (editor.editable ? editor.editable() : (editor.mode == 'wysiwyg' ? editor.document && editor.document.getBody() : editor.textarea  ) );
+	var placeholder = ev.listenerData;
+
+	if (editor.mode =='wysiwyg' )
+	{
+		// If the blur is due to a dialog, don't apply the placeholder
+		if ( CKEDITOR.dialog._.currentTop )
+			return;
+
+		if ( !root )
+			return;
+
+		if ( dataIsEmpty( root.getHtml() ) )
+		{
+			root.setHtml( placeholder );
+			root.addClass( 'placeholder' );
+		}
+	}
+	else
+	{
+		if ( supportsPlaceholder )
+		{
+			if (ev.name=='mode')
+			{
+				root.setAttribute( 'placeholder', placeholder );
+			}
+			return;
+		}
+
+		if ( dataIsEmpty( textarea.getValue() ) )
+		{
+			root.addClass( 'placeholder' );
+			root.setValue( placeholder );
+		}
+	}
+}
+
+function removePlaceholder(ev) {
+	var editor = ev.editor;
+	var root = (editor.editable ? editor.editable() : (editor.mode == 'wysiwyg' ? editor.document && editor.document.getBody() : editor.textarea  ) );
+
+	if (editor.mode =='wysiwyg' )
+	{
+		if (!root.hasClass( 'placeholder' ))
+			return;
+
+		root.removeClass( 'placeholder' );
+		// fill it properly
+		root.setHtml( (CKEDITOR.dtd[ root.getName() ]['p'] ? '<p>&nbsp;</p>' : ' ') );
+	}
+	else
+	{
+		if ( !root.hasClass( 'placeholder' ) )
+			return;
+
+		root.removeClass( 'placeholder' );
+		root.setValue( '' );
+	}
+}
+
+
+function getLang( element )
+{
+	if (!element)
+		return null;
+
+	return element.getAttribute( 'lang' ) || getLang( element.getParent() );
+}
+
 
 CKEDITOR.plugins.add( 'confighelper',
 {
@@ -34,9 +125,6 @@ CKEDITOR.plugins.add( 'confighelper',
 
 		if (placeholder)
 		{
-			// Check if the browser supports the placeholder attribute on textareas natively.
-			var supportsPlaceholder = ('placeholder' in document.createElement( 'textarea' ) );
-
 			// CSS for WYSIWYG mode
 			// v3
 			if (editor.addCss)
@@ -54,113 +142,27 @@ CKEDITOR.plugins.add( 'confighelper',
 
 			// Watch for the calls to getData to remove the placeholder
 			editor.on( 'getData', function( ev ) {
-				var element = (editor.mode == 'wysiwyg' ) ?  editor.document.getBody() : (editor.textarea || editor.editable());
+				var element = (editor.editable ? editor.editable() : (editor.mode == 'wysiwyg' ? editor.document && editor.document.getBody() : editor.textarea  ) );
 
 				if ( element && element.hasClass( 'placeholder' ) )
 					ev.data.dataValue = '';
 			});
 
-			// If the data is "empty" (BR, P) or the placeholder then return an empty string.
-			// Otherwise return the original data
-			function dataIsEmpty( data )
-			{
-				if ( data.length > 20 )
-					return false;
+			// Watch for setData to remove placeholder class
+			editor.on('setData', function(ev) {
+				var element = (editor.editable ? editor.editable() : (editor.mode == 'wysiwyg' ? editor.document && editor.document.getBody() : editor.textarea  ) );
 
-				var value = data.replace( /[\n|\t]*/g, '' ).toLowerCase();
-				if ( !value || value == '<br>' || value == '<p>&nbsp;<br></p>' || value == '<p><br></p>' || value == '<p>&nbsp;</p>' || value == '&nbsp;' || value == ' ' || value == '&nbsp;<br>' || value == ' <br>' )
-					return true;
+				if ( element && element.hasClass( 'placeholder' ) )
+					element.removeClass( 'placeholder' );
+			});
 
-				return false;
-			}
-
-			function addPlaceholder(ev) {
-				var editor = ev.editor;
-				if (editor.mode =='wysiwyg' )
-				{
-					// If the blur is due to a dialog, don't apply the placeholder
-					if ( CKEDITOR.dialog._.currentTop )
-						return;
-
-					var root;
-					if (editor.editable)
-						root = editor.editable();
-					else
-						root = editor.document && editor.document.getBody()
-
-					if ( !root )
-						return;
-
-					if ( dataIsEmpty( root.getHtml() ) )
-					{
-						root.addClass( 'placeholder' );
-						root.setHtml( placeholder );
-					}
-				}
-				else
-				{
-					var textarea = (editor.textarea || editor.editable());
-					if ( supportsPlaceholder )
-					{
-						if (ev.name=='mode')
-						{
-							textarea.setAttribute( 'placeholder', placeholder );
-						}
-						return;
-					}
-
-					if ( dataIsEmpty( textarea.getValue() ) )
-					{
-						textarea.addClass( 'placeholder' );
-						textarea.setValue( placeholder );
-					}
-				}
-			}
-
-			function removePlaceholder(ev) {
-				var editor = ev.editor;
-
-				if (editor.mode =='wysiwyg' )
-				{
-					var root;
-					if (editor.editable)
-						root = editor.editable();
-					else
-						root = editor.document && editor.document.getBody()
-
-					if (!root.hasClass( 'placeholder' ))
-						return;
-
-					root.removeClass( 'placeholder' );
-					// fill it properly
-					root.setHtml( (CKEDITOR.dtd[ root.getName() ]['p'] ? '<p>&nbsp;</p>' : ' ') );
-				}
-				else
-				{
-					var textarea = (editor.textarea || editor.editable());
-					if ( !textarea.hasClass( 'placeholder' ) )
-						return;
-
-					textarea.removeClass( 'placeholder' );
-					textarea.setValue( '' );
-				}
-			}
-
-			editor.on('blur', addPlaceholder);
-			editor.on('mode', addPlaceholder);
+			editor.on('blur', addPlaceholder, null, placeholder);
+			editor.on('mode', addPlaceholder, null, placeholder);
 
 			editor.on('focus', removePlaceholder);
 			editor.on('beforeModeUnload', removePlaceholder);
 		} // Placeholder - End
 
-
-		var getLang = function( element )
-		{
-			if (!element)
-				return null;
-
-			return element.getAttribute( 'lang' ) || getLang( element.getParent() );
-		};
 
 		// SCAYT lang from element lang:
 		var lang = editor.config.contentsLanguage || getLang( editor.element );
@@ -224,7 +226,7 @@ CKEDITOR.plugins.add( 'confighelper',
 				}
 			}
 			return tabsToProcess;
-		}
+		};
 
 		// Customize dialogs:
 		CKEDITOR.on( 'dialogDefinition', function( ev )
@@ -235,7 +237,7 @@ CKEDITOR.plugins.add( 'confighelper',
 			var dialogName = ev.data.name,
 				dialogDefinition = ev.data.definition,
 				tabsToProcess,
-				i;
+				i, name, fields, tab;
 
 			if (dialogName=='tableProperties')
 				dialogName=='table';
@@ -247,10 +249,10 @@ CKEDITOR.plugins.add( 'confighelper',
 			// Remove fields of this dialog.
 			if ( editor._.removeDialogFields && ( tabsToProcess = editor._.removeDialogFields[ dialogName ] ) )
 			{
-				for ( var name in tabsToProcess )
+				for ( name in tabsToProcess )
 				{
-					var fields = tabsToProcess[ name ],
-						tab = dialogDefinition.getContents( name );
+					fields = tabsToProcess[ name ];
+					tab = dialogDefinition.getContents( name );
 
 					for ( i=0; i<fields.length ; i++ )
 						tab.remove( fields[ i ] );
@@ -264,10 +266,10 @@ CKEDITOR.plugins.add( 'confighelper',
 			// Remove fields of this dialog.
 			if ( editor._.hideDialogFields && ( tabsToProcess = editor._.hideDialogFields[ dialogName ] ) )
 			{
-				for ( var name in tabsToProcess )
+				for ( name in tabsToProcess )
 				{
-					var fields = tabsToProcess[ name ],
-						tab = dialogDefinition.getContents( name );
+					fields = tabsToProcess[ name ];
+					tab = dialogDefinition.getContents( name );
 
 					for ( i=0; i<fields.length ; i++ )
 						tab.get( fields[ i ] ).hidden = true;
@@ -277,10 +279,10 @@ CKEDITOR.plugins.add( 'confighelper',
 			// Set default values.
 			if ( editor.config.dialogFieldsDefaultValues && ( tabsToProcess = editor.config.dialogFieldsDefaultValues[ dialogName ] ) )
 			{
-				for ( var name in tabsToProcess )
+				for ( name in tabsToProcess )
 				{
-					var fields = tabsToProcess[ name ],
-						tab = dialogDefinition.getContents( name );
+					fields = tabsToProcess[ name ];
+					tab = dialogDefinition.getContents( name );
 
 					for ( var fieldName in fields )
 					{
@@ -297,6 +299,7 @@ CKEDITOR.plugins.add( 'confighelper',
 	}
 } );
 
+})();
 
  /**
   * Allows to define which dialog fiels must be removed
