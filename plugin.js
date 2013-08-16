@@ -54,10 +54,10 @@ function addPlaceholder(ev) {
 			return;
 		}
 
-		if ( dataIsEmpty( textarea.getValue() ) )
+		if ( dataIsEmpty( root.getValue() ) )
 		{
-			root.addClass( 'placeholder' );
 			root.setValue( placeholder );
+			root.addClass( 'placeholder' );
 		}
 	}
 }
@@ -133,7 +133,7 @@ CKEDITOR.plugins.add( 'confighelper',
 			// CSS for textarea mode
 			var node = CKEDITOR.document.getHead().append( 'style' );
 			node.setAttribute( 'type', 'text/css' );
-			var content = 'textarea.placeholder { color: #999; }';
+			var content = 'textarea.placeholder { color: #999;  font-style: italic; }';
 
 			if ( CKEDITOR.env.ie )
 				node.$.styleSheet.cssText = content;
@@ -150,10 +150,29 @@ CKEDITOR.plugins.add( 'confighelper',
 
 			// Watch for setData to remove placeholder class
 			editor.on('setData', function(ev) {
-				var element = (editor.editable ? editor.editable() : (editor.mode == 'wysiwyg' ? editor.document && editor.document.getBody() : editor.textarea  ) );
+				if ( CKEDITOR.dialog._.currentTop )
+					return;
 
-				if ( element && element.hasClass( 'placeholder' ) )
-					element.removeClass( 'placeholder' );
+				if ( editor.mode =='source' && supportsPlaceholder )
+					return;
+
+				var root = (editor.editable ? editor.editable() : (editor.mode == 'wysiwyg' ? editor.document && editor.document.getBody() : editor.textarea  ) );
+
+				if ( !root )
+					return;
+
+				if ( !dataIsEmpty( ev.data.dataValue ) )
+				{
+					// Remove the class if new data is not empty
+					if ( root.hasClass( 'placeholder' ) )
+						root.removeClass( 'placeholder' );
+				}
+				else
+				{
+					// if data is empty, set it to the placeholder
+					ev.data.dataValue = placeholder;
+					root.addClass( 'placeholder' );
+				}
 			});
 
 			editor.on('blur', addPlaceholder, null, placeholder);
