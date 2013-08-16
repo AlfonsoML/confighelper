@@ -225,7 +225,8 @@ CKEDITOR.plugins.add( 'confighelper',
 				return value;
 
 			var contents = value.split( ';' ),
-				tabsToProcess = {};
+				tabsToProcess = {},
+				i;
 
 			for ( i = 0; i < contents.length; i++ )
 			{
