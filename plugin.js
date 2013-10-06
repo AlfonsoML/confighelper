@@ -170,7 +170,7 @@ CKEDITOR.plugins.add( 'confighelper',
 				else
 				{
 					// if data is empty, set it to the placeholder
-				    addPlaceholder(ev);
+					addPlaceholder(ev);
 				}
 			});
 
