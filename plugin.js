@@ -72,8 +72,20 @@ function removePlaceholder(ev) {
 			return;
 
 		root.removeClass( 'placeholder' );
+
 		// fill it properly
-		root.setHtml( (CKEDITOR.dtd[ root.getName() ]['p'] ? '<p>&nbsp;</p>' : ' ') );
+        if (CKEDITOR.dtd[ root.getName() ]['p'])
+        {
+            root.setHtml( '<p><br/></p>' );
+            // Set caret in position
+            var range = new CKEDITOR.dom.range(editor.document);
+            range.moveToElementEditablePosition(root.getFirst(), true);
+            editor.getSelection().selectRanges([range]);
+        }
+        else
+        {
+            root.setHtml(' ');
+        }
 	}
 	else
 	{
