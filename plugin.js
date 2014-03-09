@@ -135,7 +135,7 @@ CKEDITOR.plugins.add( 'confighelper',
 			node.setAttribute( 'type', 'text/css' );
 			var content = 'textarea.placeholder { color: #999;  font-style: italic; }';
 
-			if ( CKEDITOR.env.ie )
+			if ( CKEDITOR.env.ie && CKEDITOR.env.version<11)
 				node.$.styleSheet.cssText = content;
 			else
 				node.$.innerHTML = content;
