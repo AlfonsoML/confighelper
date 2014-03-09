@@ -73,7 +73,18 @@ function removePlaceholder(ev) {
 
 		root.removeClass( 'placeholder' );
 		// fill it properly
-		root.setHtml( (CKEDITOR.dtd[ root.getName() ]['p'] ? '<p>&nbsp;</p>' : ' ') );
+		if (CKEDITOR.dtd[ root.getName() ]['p'])
+		{
+			root.setHtml( '<p><br/></p>' );
+			// Set caret in position
+			var range = new CKEDITOR.dom.range(editor.document);
+			range.moveToElementEditablePosition(root.getFirst(), true);
+			editor.getSelection().selectRanges([range]);
+		}
+		else
+		{
+			root.setHtml(' ');
+		}
 	}
 	else
 	{
@@ -133,7 +144,7 @@ CKEDITOR.plugins.add( 'confighelper',
 			// CSS for textarea mode
 			var node = CKEDITOR.document.getHead().append( 'style' );
 			node.setAttribute( 'type', 'text/css' );
-			var content = 'textarea.placeholder { color: #999;  font-style: italic; }';
+			var content = 'textarea.placeholder { color: #999; font-style: italic; }';
 
 			if ( CKEDITOR.env.ie && CKEDITOR.env.version<11)
 				node.$.styleSheet.cssText = content;
