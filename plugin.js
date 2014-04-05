@@ -27,8 +27,10 @@ function addPlaceholder(ev) {
 	var editor = ev.editor;
 	var root = (editor.editable ? editor.editable() : (editor.mode == 'wysiwyg' ? editor.document && editor.document.getBody() : editor.textarea  ) );
 	var placeholder = ev.listenerData;
+	if (!root)
+		return;
 
-	if (editor.mode =='wysiwyg' )
+	if (editor.mode == 'wysiwyg')
 	{
 		// If the blur is due to a dialog, don't apply the placeholder
 		if ( CKEDITOR.dialog._.currentTop )
@@ -43,7 +45,8 @@ function addPlaceholder(ev) {
 			root.addClass( 'placeholder' );
 		}
 	}
-	else
+
+	if (editor.mode == 'source')
 	{
 		if ( supportsPlaceholder )
 		{
@@ -65,8 +68,10 @@ function addPlaceholder(ev) {
 function removePlaceholder(ev) {
 	var editor = ev.editor;
 	var root = (editor.editable ? editor.editable() : (editor.mode == 'wysiwyg' ? editor.document && editor.document.getBody() : editor.textarea  ) );
+	if (!root)
+		return;
 
-	if (editor.mode =='wysiwyg' )
+	if (editor.mode == 'wysiwyg' )
 	{
 		if (!root.hasClass( 'placeholder' ))
 			return;
@@ -86,7 +91,8 @@ function removePlaceholder(ev) {
 			root.setHtml(' ');
 		}
 	}
-	else
+
+	if (editor.mode == 'source')
 	{
 		if ( !root.hasClass( 'placeholder' ) )
 			return;
