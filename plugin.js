@@ -13,6 +13,9 @@ var supportsPlaceholder = ('placeholder' in document.createElement( 'textarea' )
 // Otherwise return the original data
 function dataIsEmpty( data )
 {
+	if ( !data)
+		return true;
+
 	if ( data.length > 20 )
 		return false;
 
