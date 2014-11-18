@@ -20,7 +20,7 @@ function dataIsEmpty( data )
 		return false;
 
 	var value = data.replace( /[\n|\t]*/g, '' ).toLowerCase();
-	if ( !value || value == '<br>' || value == '<p>&nbsp;<br></p>' || value == '<p><br></p>' || value == '<p>&nbsp;</p>' || value == '&nbsp;' || value == ' ' || value == '&nbsp;<br>' || value == ' <br>' )
+	if ( !value || value === '' || value == '<br>' || value == '<p>&nbsp;<br></p>' || value == '<p><br></p>' || value == '<p>&nbsp;</p>' || value == '&nbsp;' || value == ' ' || value == '&nbsp;<br>' || value == ' <br>')
 		return true;
 
 	return false;
@@ -42,7 +42,7 @@ function addPlaceholder(ev) {
 		if ( !root )
 			return;
 
-		if ( dataIsEmpty( root.getHtml() ) )
+		if ( dataIsEmpty( root.getText() ) )
 		{
 			root.setHtml( placeholder );
 			root.addClass( 'placeholder' );
