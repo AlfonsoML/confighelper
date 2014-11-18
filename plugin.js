@@ -196,6 +196,7 @@ CKEDITOR.plugins.add( 'confighelper',
 
 			editor.on('blur', addPlaceholder, null, placeholder);
 			editor.on('mode', addPlaceholder, null, placeholder);
+			editor.on('contentDom', addPlaceholder, null, placeholder);
 
 			editor.on('focus', removePlaceholder);
 			editor.on('beforeModeUnload', removePlaceholder);
