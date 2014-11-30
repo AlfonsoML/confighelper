@@ -206,6 +206,10 @@ CKEDITOR.plugins.add( 'confighelper',
 		var lang = editor.config.contentsLanguage || getLang( editor.element );
 		if ( lang && ! editor.config.scayt_sLang )
 		{
+			// Remove the stored language
+			if (localStorage)
+				localStorage.removeItem("scayt_0_lang");
+
 			// Convert from HTML5 Lang to spellchecker.net values
 			var map = {
 				'en'   : 'en_US',
