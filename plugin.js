@@ -258,7 +258,7 @@
 					i, name, fields, tab;
 
 				if (dialogName == 'tableProperties')
-					dialogName == 'table';
+					dialogName = 'table';
 
 				// Parse the config to turn it into a js object
 				if ( !( 'removeDialogFields' in editor._ ) && editor.config.removeDialogFields )
