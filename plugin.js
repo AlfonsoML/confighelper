@@ -167,7 +167,21 @@
 							root.removeClass( 'placeholder' );
 					} else {
 						// if data is empty, set it to the placeholder
+						
+						// save current focus status of editor to refocus after adding the placeholder
+            					var hasFocus = ev.editor.focusManager.hasFocus;
+            
+            					// remove focus from editor before adding the placeholder
+            					if( hasFocus ) {
+              						ev.editor.focusManager.blur();
+						}
+						
 						addPlaceholder(ev);
+						
+						//refocus editor after setting placeholder
+						if( hasFocus ) {
+              						ev.editor.focusManager.focus();
+            					}
 					}
 				});
 
