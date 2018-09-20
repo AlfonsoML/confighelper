@@ -176,6 +176,7 @@
 				editor.on('contentDom', addPlaceholder, null, placeholder);
 
 				editor.on('focus', removePlaceholder);
+				editor.on('key', removePlaceholder);
 				editor.on('beforeModeUnload', removePlaceholder);
 			} // Placeholder - End
 
