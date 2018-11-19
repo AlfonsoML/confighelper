@@ -248,7 +248,7 @@
 			};
 
 			// Customize dialogs:
-			CKEDITOR.on( 'dialogDefinition', function( ev ) {
+			function customizeDialogs( ev ) {
 				if ( editor != ev.editor )
 					return;
 
@@ -305,6 +305,11 @@
 				}
 
 
+			}
+
+			CKEDITOR.on( 'dialogDefinition', customizeDialogs );
+			editor.once( 'beforeDestroy', function() {
+				CKEDITOR.removeListener( 'dialogDefinition', customizeDialogs );
 			});
 
 		}
