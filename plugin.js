@@ -74,7 +74,7 @@
 			root.removeClass( 'placeholder' );
 			// fill it properly
 			if (CKEDITOR.dtd[ root.getName() ]['p']) {
-				root.setHtml( '<p><br/></p>' );
+				root.setHtml( editor.enterMode === CKEDITOR.ENTER_P ? '<p><br/></p>' : (editor.enterMode === CKEDITOR.ENTER_DIV ? '<div><br/></div>' : '<br/>') );
 				// Set caret in position
 				var range = new CKEDITOR.dom.range(editor.document);
 				range.moveToElementEditablePosition(root.getFirst(), true);
