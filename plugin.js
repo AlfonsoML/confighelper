@@ -3,11 +3,12 @@
  * Copyright (C) 2012 Alfonso Martínez de Lizarrondo
  *
  */
+/* global CKEDITOR */
 (function() {
 	'use strict';
 
 	// Check if the browser supports the placeholder attribute on textareas natively.
-	var supportsPlaceholder = ('placeholder' in document.createElement( 'textarea' ) );
+	var supportsPlaceholder = 'placeholder' in document.createElement( 'textarea' );
 
 	// If the data is "empty" (BR, P) or the placeholder then return an empty string.
 	// Otherwise return the original data
@@ -27,7 +28,7 @@
 
 	function addPlaceholder(ev) {
 		var editor = ev.editor;
-		var root = (editor.editable ? editor.editable() : (editor.mode == 'wysiwyg' ? editor.document && editor.document.getBody() : editor.textarea  ) );
+		var root = editor.editable();
 		var placeholder = ev.listenerData;
 		if (!root)
 			return;
@@ -63,7 +64,7 @@
 
 	function removePlaceholder(ev) {
 		var editor = ev.editor;
-		var root = (editor.editable ? editor.editable() : (editor.mode == 'wysiwyg' ? editor.document && editor.document.getBody() : editor.textarea  ) );
+		var root = editor.editable();
 		if (!root)
 			return;
 
@@ -106,9 +107,7 @@
 		},
 
 		onLoad : function() {
-			// v4
-			if (CKEDITOR.addCss)
-				CKEDITOR.addCss( this.getPlaceholderCss() );
+			CKEDITOR.addCss( this.getPlaceholderCss() );
 		},
 
 		init : function( editor ) {
@@ -125,11 +124,6 @@
 			var placeholder = editor.element.getAttribute( 'placeholder' ) || editor.config.placeholder;
 
 			if (placeholder) {
-				// CSS for WYSIWYG mode
-				// v3
-				if (editor.addCss)
-					editor.addCss(this.getPlaceholderCss());
-
 				// CSS for textarea mode
 				var node = CKEDITOR.document.getHead().append( 'style' );
 				node.setAttribute( 'type', 'text/css' );
@@ -142,7 +136,7 @@
 
 				// Watch for the calls to getData to remove the placeholder
 				editor.on( 'getData', function( ev ) {
-					var element = (editor.editable ? editor.editable() : (editor.mode == 'wysiwyg' ? editor.document && editor.document.getBody() : editor.textarea  ) );
+					var element = editor.editable();
 
 					if ( element && element.hasClass( 'placeholder' ) )
 						ev.data.dataValue = '';
@@ -156,7 +150,7 @@
 					if ( editor.mode == 'source' && supportsPlaceholder )
 						return;
 
-					var root = (editor.editable ? editor.editable() : (editor.mode == 'wysiwyg' ? editor.document && editor.document.getBody() : editor.textarea  ) );
+					var root = editor.editable();
 
 					if ( !root )
 						return;
@@ -270,6 +264,8 @@
 					for ( name in tabsToProcess ) {
 						fields = tabsToProcess[ name ];
 						tab = dialogDefinition.getContents( name );
+						if (!tab)
+							continue;
 
 						for ( i = 0; i < fields.length ; i++ )
 							tab.remove( fields[ i ] );
@@ -285,6 +281,8 @@
 					for ( name in tabsToProcess ) {
 						fields = tabsToProcess[ name ];
 						tab = dialogDefinition.getContents( name );
+						if (!tab)
+							continue;
 
 						for ( i = 0; i < fields.length ; i++ )
 							tab.get( fields[ i ] ).hidden = true;
@@ -296,6 +294,8 @@
 					for ( name in tabsToProcess ) {
 						fields = tabsToProcess[ name ];
 						tab = dialogDefinition.getContents( name );
+						if (!tab)
+							continue;
 
 						for ( var fieldName in fields ) {
 							var dialogField = tab.get( fieldName );
