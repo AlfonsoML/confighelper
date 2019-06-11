@@ -20,7 +20,7 @@
 			return false;
 
 		var value = data.replace( /[\n|\t]*/g, '' ).toLowerCase();
-		if ( !value || value == '<br>' || value == '<p>&nbsp;<br></p>' || value == '<p><br></p>' || value == '<p>&nbsp;</p>' || value == '&nbsp;' || value == ' ' || value == '&nbsp;<br>' || value == ' <br>' )
+		if ( !value || value == '<br>' || value == '<p>&nbsp;<br></p>' || value == '<p><br></p>' || value == '<div><br></div>' || value == '<p>&nbsp;</p>' || value == '&nbsp;' || value == ' ' || value == '&nbsp;<br>' || value == ' <br>' )
 			return true;
 
 		return false;
@@ -75,7 +75,18 @@
 			root.removeClass( 'placeholder' );
 			// fill it properly
 			if (CKEDITOR.dtd[ root.getName() ]['p']) {
-				root.setHtml( editor.enterMode === CKEDITOR.ENTER_P ? '<p><br/></p>' : (editor.enterMode === CKEDITOR.ENTER_DIV ? '<div><br/></div>' : '<br/>') );
+				var value = ' ';
+				if ( editor.enterMode === CKEDITOR.ENTER_P ){
+					value = '<p><br/></p>';
+				} else if (editor.enterMode === CKEDITOR.ENTER_DIV) {
+					value = '<div><br/><\/div>';
+				} else {
+					// FireFox prepends an additional line
+					if (!CKEDITOR.env.gecko){
+						value = '<br/>';
+					}
+				}
+				root.setHtml(value);
 				// Set caret in position
 				var range = new CKEDITOR.dom.range(editor.document);
 				range.moveToElementEditablePosition(root.getFirst(), true);
