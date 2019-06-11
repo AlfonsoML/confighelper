@@ -75,15 +75,17 @@
 			root.removeClass( 'placeholder' );
 			// fill it properly
 			if (CKEDITOR.dtd[ root.getName() ]['p']) {
-				var value = ' ';
+				var value = '';
 				if ( editor.enterMode === CKEDITOR.ENTER_P ){
 					value = '<p><br/></p>';
 				} else if (editor.enterMode === CKEDITOR.ENTER_DIV) {
 					value = '<div><br/><\/div>';
 				} else {
+					// This is for CKEDITOR.ENTER_BR
+					value = '<br/>;
 					// FireFox prepends an additional line
-					if (!CKEDITOR.env.gecko){
-						value = '<br/>';
+					if (CKEDITOR.env.gecko || CKEDITOR.env.ie){
+						value = ' ';
 					}
 				}
 				root.setHtml(value);
