@@ -28,6 +28,11 @@
 
 	function addPlaceholder(ev) {
 		var editor = ev.editor;
+		
+		// do not add placeholder in readOnly mode
+		if (editor.readOnly)
+			return;
+		
 		var root = editor.editable();
 		var placeholder = ev.listenerData;
 		if (!root)
@@ -91,6 +96,15 @@
 
 			root.removeClass( 'placeholder' );
 			root.setValue( '' );
+		}
+	}
+	
+	function handleReadOnlyChange(ev) {
+		var editor = ev.editor;
+		if (editor.readOnly){
+			removePlaceholder(ev);
+		} else {
+			addPlaceholder(ev);
 		}
 	}
 
@@ -172,6 +186,8 @@
 				editor.on('focus', removePlaceholder);
 				editor.on('key', removePlaceholder);
 				editor.on('beforeModeUnload', removePlaceholder);
+				
+				editor.on('readOnly', handleReadOnlyChange);
 			} // Placeholder - End
 
 
