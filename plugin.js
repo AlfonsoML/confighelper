@@ -187,7 +187,7 @@
 				editor.on('key', removePlaceholder);
 				editor.on('beforeModeUnload', removePlaceholder);
 				
-				editor.on('readOnly', handleReadOnlyChange);
+				editor.on('readOnly', handleReadOnlyChange, null, placeholder);
 			} // Placeholder - End
 
 
