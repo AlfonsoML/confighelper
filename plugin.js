@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @file Configuration helper plugin for CKEditor
  * Copyright (C) 2012 Alfonso Martínez de Lizarrondo
  *
@@ -87,7 +87,7 @@
 					value = '<div><br/><\/div>';
 				} else {
 					// This is for CKEDITOR.ENTER_BR
-					value = '<br/>;
+					value = '<br/>';
 					// FireFox prepends an additional line
 					if (CKEDITOR.env.gecko || CKEDITOR.env.ie){
 						value = ' ';
