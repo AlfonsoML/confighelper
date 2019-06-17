@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @file Configuration helper plugin for CKEditor
  * Copyright (C) 2012 Alfonso Martínez de Lizarrondo
  *
@@ -28,11 +28,11 @@
 
 	function addPlaceholder(ev) {
 		var editor = ev.editor;
-		
+
 		// do not add placeholder in readOnly mode
 		if (editor.readOnly)
 			return;
-		
+
 		var root = editor.editable();
 		var placeholder = ev.listenerData;
 		if (!root)
@@ -81,7 +81,7 @@
 			// fill it properly
 			if (CKEDITOR.dtd[ root.getName() ]['p']) {
 				var value = '';
-				if ( editor.enterMode === CKEDITOR.ENTER_P ){
+				if ( editor.enterMode === CKEDITOR.ENTER_P ) {
 					value = '<p><br/></p>';
 				} else if (editor.enterMode === CKEDITOR.ENTER_DIV) {
 					value = '<div><br/><\/div>';
@@ -89,7 +89,7 @@
 					// This is for CKEDITOR.ENTER_BR
 					value = '<br/>';
 					// FireFox prepends an additional line
-					if (CKEDITOR.env.gecko || CKEDITOR.env.ie){
+					if (CKEDITOR.env.gecko || CKEDITOR.env.ie) {
 						value = ' ';
 					}
 				}
@@ -111,10 +111,10 @@
 			root.setValue( '' );
 		}
 	}
-	
+
 	function handleReadOnlyChange(ev) {
 		var editor = ev.editor;
-		if (editor.readOnly){
+		if (editor.readOnly) {
 			removePlaceholder(ev);
 		} else {
 			addPlaceholder(ev);
@@ -199,7 +199,7 @@
 				editor.on('focus', removePlaceholder);
 				editor.on('key', removePlaceholder);
 				editor.on('beforeModeUnload', removePlaceholder);
-				
+
 				editor.on('readOnly', handleReadOnlyChange, null, placeholder);
 			} // Placeholder - End
 
